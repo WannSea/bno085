@@ -24,15 +24,19 @@ pub enum ChannelHubControlData {
 
 #[derive(Debug)]
 pub struct SensorData<const EL_COUNT: usize, T: Sized=f32> {
-    id: u8,
-    seq_number: u8,
-    status: u8,
-    values: [T; EL_COUNT]
+    pub id: u8,
+    pub seq_number: u8,
+    pub status: u8,
+    pub values: [T; EL_COUNT]
 }
 
-impl<const EL_COUNT: usize, T: Sized> SensorData<EL_COUNT, T> {
+impl<const EL_COUNT: usize, T: Sized + std::clone::Clone> SensorData<EL_COUNT, T> {
     pub fn new(id: u8, seq_number: u8, status: u8, values: [T; EL_COUNT]) -> Self {
         return SensorData { id, seq_number, status, values }
+    }
+
+    pub fn get_vec(&self) -> Vec<T> {
+        return self.values.to_vec();
     }
 }
 
