@@ -23,7 +23,7 @@ pub enum ChannelHubControlData {
 }
 
 #[derive(Debug)]
-pub struct SensorData<const EL_COUNT: usize, T: Sized=f32> {
+pub struct SensorData<const EL_COUNT: usize, T: Sized + std::clone::Clone=f32> {
     pub id: u8,
     pub seq_number: u8,
     pub status: u8,
