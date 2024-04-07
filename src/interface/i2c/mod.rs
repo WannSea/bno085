@@ -1,7 +1,7 @@
 mod ids;
 
 use async_trait::async_trait;
-use embedded_hal_async::i2c::I2c;
+use embedded_hal::i2c::{I2c, SevenBitAddress};
 use self::ids::DEFAULT_ADDRESS;
 use super::ComInterface;
 
@@ -16,21 +16,25 @@ impl<I2C: I2c> I2CInterface<I2C> {
     }
 }
 
+#[derive(Debug)]
 pub enum I2CError {
     Default
 }
 
 #[async_trait]
-impl<I2C> ComInterface for I2CInterface<I2C> where I2C : std::marker::Sync {
-    type ComError = I2CError;
+impl<I2C: I2c, CommE> ComInterface for I2CInterface<I2C> where
+    I2C: embedded_hal::i2c::I2c<SevenBitAddress, Error = CommE> {
+    type ComError = CommE;
 
-    async fn setup(&self) -> Result<(), Self::ComError> {
+    fn setup(&mut self) -> Result<(), Self::ComError> {
         Ok(())
     }
-    async fn read_packet(&self, recv_buf: &mut[u8]) -> Result<usize, Self::ComError> {
-        Ok(0)
+    fn read_bytes(&mut self, recv_buf: &mut[u8]) -> Result<(), Self::ComError> {
+        self.interface.read(self.address, recv_buf)?;
+        Ok(())
     }
-    async fn write_packet(&self, packet: &[u8]) -> Result<(), Self::ComError> {
+    fn write_bytes(&mut self, packet: &[u8]) -> Result<(), Self::ComError> {
+        self.interface.write(self.address, packet)?;
         Ok(())
     }
 }
