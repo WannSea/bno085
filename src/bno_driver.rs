@@ -10,11 +10,6 @@ const PACKET_SEND_BUF_LEN: usize = 256;
 pub enum DriverError<E> {
     ///Communications error
     CommError(E),
-    /// Invalid chip ID was read
-    InvalidChipId(u8),
-    /// Unsupported sensor firmware version
-    InvalidFWVersion(u8),
-    /// We expected some data but didn't receive any
     NoDataAvailable,
     ParseError(BnoPacketParseError),
     UnknownData
