@@ -1,6 +1,6 @@
 use crate::{
     bno_constants::{
-        PACKET_HEADER_LENGTH, SENSOR_REPORTID_ACCEL, SENSOR_REPORTID_GRAVITY, SENSOR_REPORTID_GYRO_CALIBRATED, SENSOR_REPORTID_LINEAR_ACCEL, SENSOR_REPORTID_MAG_CALIBRATED, SENSOR_REPORTID_ROTATION_VECTOR
+        PACKET_HEADER_LENGTH, SENSOR_REPORTID_ACCEL, SENSOR_REPORTID_ARVR_STABILIZED_ROTATION_VECTOR, SENSOR_REPORTID_GRAVITY, SENSOR_REPORTID_GYRO_CALIBRATED, SENSOR_REPORTID_LINEAR_ACCEL, SENSOR_REPORTID_MAG_CALIBRATED, SENSOR_REPORTID_ROTATION_VECTOR
     },
     bno_packet::{BnoPacket, BnoPacketParseError, SensorData, SensorReportData},
 };
@@ -136,6 +136,19 @@ pub fn parse_sensor_reports(data: &[u8]) -> Result<BnoPacket, BnoPacketParseErro
                 [
                     q8_to_f32(data, &mut cursor),
                 ],
+            )),
+            SENSOR_REPORTID_ARVR_STABILIZED_ROTATION_VECTOR => 
+                SensorReportData::Rotation(SensorData::new(
+                    id,
+                    seq_num,
+                    status,
+                    [
+                        q14_to_f32(data, &mut cursor),
+                        q14_to_f32(data, &mut cursor),
+                        q14_to_f32(data, &mut cursor),
+                        q14_to_f32(data, &mut cursor),
+                        q12_to_f32(data, &mut cursor),
+                    ],
             )),
             _ => SensorReportData::Unknown(id),
         };
